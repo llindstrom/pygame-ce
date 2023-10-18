@@ -1,6 +1,7 @@
 [build-system]
 requires = [
   "setuptools >= 59.6.0",
+  "wheel >= 0.41.2",
   "Cython >= 3.0.0",
 ]
 build-backend = "setuptools.build_meta:__legacy__"
