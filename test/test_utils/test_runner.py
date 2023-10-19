@@ -304,7 +304,7 @@ def run_test(
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         prog="test_runner.py",
-        desciption="Run a pygame test file.",
+        description="Run a pygame test file.",
         parents=[base_arg_parser],
     )
     arg_parser.add_argument("test", nargs=1, help="the test to run")

@@ -26,7 +26,7 @@ else:
 
 if is_pygame_pkg:
     from pygame.tests.test_utils.run_tests import run_and_exit
-    from pygame.tests.test_utils.test_runner import arg_parser
+    from pygame.tests.test_utils.test_runner import base_arg_parser
 else:
     from test.test_utils.run_tests import run_and_exit
     from test.test_utils.test_runner import base_arg_parser
