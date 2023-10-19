@@ -1,18 +1,17 @@
 """Load and run the Pygame test suite
 
-python -c "import pygame.tests.go" [<test options>]
+python -c "import pygame.tests" [<test options>]
 
 or
 
-python test/go.py [<test options>]
+python test [<test options>]
 
 Command line option --help displays a command line usage message.
-
-run_tests.py in the main distribution directory is an alternative to test.go
-
 """
 
 import sys
+import argparse
+import textwrap
 
 if __name__ == "__main__":
     import os
@@ -27,117 +26,113 @@ else:
 
 if is_pygame_pkg:
     from pygame.tests.test_utils.run_tests import run_and_exit
-    from pygame.tests.test_utils.test_runner import opt_parser
+    from pygame.tests.test_utils.test_runner import arg_parser
 else:
     from test.test_utils.run_tests import run_and_exit
-    from test.test_utils.test_runner import opt_parser
+    from test.test_utils.test_runner import base_arg_parser
 
 if is_pygame_pkg:
     test_pkg_name = "pygame.tests"
+    prog = f"python -m {test_pkg_name}"
 else:
     test_pkg_name = "test"
-program_name = sys.argv[0]
-if program_name == "-c":
-    program_name = f'python -c "import {test_pkg_name}.go"'
+    prog = f"python {test_pkg_name}"
+
 
 ###########################################################################
 # Set additional command line options
 #
 # Defined in test_runner.py as it shares options, added to here
 
-opt_parser.set_usage(
-    f"""
+arg_parser = argparse.ArgumentParser(
+    prog=prog,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description=f"Run all or some of the {test_pkg_name}.xxxx_test tests.",
+    epilog=textwrap.dedent(
+        f"""\
+    [Example]
 
-Runs all or some of the {test_pkg_name}.xxxx_test tests.
+    $ {prog} -sd sprite threads
 
-$ {program_name} sprite threads -sd
-
-Runs the sprite and threads module tests isolated in subprocesses, dumping
-all failing tests info in the form of a dict.
-
-"""
+    Run the sprite and threads module tests isolated in subprocesses, dumping
+    all failing tests info in the form of a dict.
+    """
+    ),
+    parents=[base_arg_parser],
 )
-
-opt_parser.add_option(
+arg_parser.add_argument(
     "-d", "--dump", action="store_true", help="dump results as dict ready to eval"
 )
-
-opt_parser.add_option("-F", "--file", help="dump results to a file")
-
-opt_parser.add_option(
+arg_parser.add_argument("-F", "--file", help="dump results to a file")
+arg_parser.add_argument(
     "-m",
     "--multi_thread",
     metavar="THREADS",
-    type="int",
+    type=int,
     help="run subprocessed tests in x THREADS",
 )
-
-opt_parser.add_option(
+arg_parser.add_argument(
     "-t",
     "--time_out",
     metavar="SECONDS",
-    type="int",
+    type=int,
     help="kill stalled subprocessed tests after SECONDS",
 )
-
-opt_parser.add_option(
+arg_parser.add_argument(
     "-f", "--fake", metavar="DIR", help="run fake tests in run_tests__tests/$DIR"
 )
-
-opt_parser.add_option(
+arg_parser.add_argument(
     "-p",
     "--python",
     metavar="PYTHON",
-    help="path to python executable to run subproccesed tests\n"
-    "default (sys.executable): %s" % sys.executable,
+    help=f"path to python executable to run subproccesed tests\ndefault (sys.executable): {sys.executable}",
 )
-
-opt_parser.add_option(
+arg_parser.add_argument(
     "-I",
     "--interactive",
     action="store_true",
     help="include tests requiring user input",
 )
-
-opt_parser.add_option("-S", "--seed", type="int", help="Randomisation seed")
+arg_parser.add_argument("-S", "--seed", type=int, help="Randomisation seed")
+arg_parser.add_argument("test", nargs="+", help="test name")
 
 ###########################################################################
 # Set run() keyword arguments according to command line arguments.
 # args will be the test module list, passed as positional arguments.
 
-options, args = opt_parser.parse_args()
+args = arg_parser.parse_args()
 kwds = {}
-if options.incomplete:
+if args.incomplete:
     kwds["incomplete"] = True
-if options.usesubprocess:
+if args.usesubprocess:
     kwds["usesubprocess"] = True
 else:
     kwds["usesubprocess"] = False
-if options.dump:
+if args.dump:
     kwds["dump"] = True
-if options.file:
-    kwds["file"] = options.file
-if options.exclude:
-    kwds["exclude"] = options.exclude
-if options.unbuffered:
+if args.file:
+    kwds["file"] = args.file
+if args.exclude:
+    kwds["exclude"] = args.exclude
+if args.unbuffered:
     kwds["unbuffered"] = True
-if options.randomize:
+if args.randomize:
     kwds["randomize"] = True
-if options.seed is not None:
-    kwds["seed"] = options.seed
-if options.multi_thread is not None:
-    kwds["multi_thread"] = options.multi_thread
-if options.time_out is not None:
-    kwds["time_out"] = options.time_out
-if options.fake:
-    kwds["fake"] = options.fake
-if options.python:
-    kwds["python"] = options.python
-if options.interactive:
+if args.seed is not None:
+    kwds["seed"] = args.seed
+if args.multi_thread is not None:
+    kwds["multi_thread"] = args.multi_thread
+if args.time_out is not None:
+    kwds["time_out"] = args.time_out
+if args.fake:
+    kwds["fake"] = args.fake
+if args.python:
+    kwds["python"] = args.python
+if args.interactive:
     kwds["interactive"] = True
-kwds["verbosity"] = options.verbosity if options.verbosity is not None else 1
+kwds["verbosity"] = args.verbosity
 
 
 ###########################################################################
 # Run the test suite.
-run_and_exit(*args, **kwds)
+run_and_exit(*args.test, **kwds)

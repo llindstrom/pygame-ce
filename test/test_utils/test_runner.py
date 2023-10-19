@@ -11,7 +11,7 @@ else:
     is_pygame_pkg = __name__.startswith("pygame.tests.")
 
 import io
-import optparse
+import argparse
 import re
 import unittest
 from pprint import pformat
@@ -40,42 +40,38 @@ TAG_RE = re.compile(TAG_PAT)
 EXCLUDE_RE = re.compile(rf"({TAG_PAT},?\s*)+$")
 
 
-def exclude_callback(option, opt, value, parser):
+def exclution_list(value):
     if EXCLUDE_RE.match(value) is None:
-        raise optparse.OptionValueError(f"{opt} argument has invalid value")
-    parser.values.exclude = TAG_RE.findall(value)
+        raise ValueError(f"invalid value '{value}'")
+    return TAG_RE.findall(value)
 
 
-opt_parser = optparse.OptionParser()
-
-opt_parser.add_option(
+base_arg_parser = argparse.ArgumentParser(add_help=False)
+base_arg_parser.add_argument(
     "-i", "--incomplete", action="store_true", help="fail incomplete tests"
 )
-
-opt_parser.add_option(
+base_arg_parser.add_argument(
     "-s",
     "--usesubprocess",
     action="store_true",
-    help="run everything in a single process " " (default: use no subprocesses)",
+    help="run everything in a single process (default: use no subprocesses)",
 )
-
-opt_parser.add_option(
+base_arg_parser.add_argument(
     "-e",
     "--exclude",
-    action="callback",
-    type="string",
-    help="exclude tests containing any of TAGS",
-    callback=exclude_callback,
+    metavar="TAGS",
+    type=exclution_list,
+    help="""exclude tests containing any of TAGS,
+            a list of one or more, optionally comma separated, tag names""",
 )
-
-opt_parser.add_option(
+base_arg_parser.add_argument(
     "-u",
     "--unbuffered",
     action="store_true",
     help="Show stdout/stderr as tests run, rather than storing it and showing on failures",
 )
-
-opt_parser.add_option(
+group = base_arg_parser.add_mutually_exclusive_group()
+group.add_argument(
     "-v",
     "--verbose",
     dest="verbosity",
@@ -83,7 +79,7 @@ opt_parser.add_option(
     const=2,
     help="Verbose output",
 )
-opt_parser.add_option(
+group.add_argument(
     "-q",
     "--quiet",
     dest="verbosity",
@@ -91,10 +87,11 @@ opt_parser.add_option(
     const=0,
     help="Quiet output",
 )
-
-opt_parser.add_option(
+base_arg_parser.set_defaults(verbosity=1)
+base_arg_parser.add_argument(
     "-r", "--randomize", action="store_true", help="randomize order of tests"
 )
+
 
 ################################################################################
 # If an xxxx_test.py takes longer than TIME_OUT seconds it will be killed
@@ -305,20 +302,21 @@ def run_test(
 ################################################################################
 
 if __name__ == "__main__":
-    options, args = opt_parser.parse_args()
-    if not args:
-        if is_pygame_pkg:
-            run_from = "pygame.tests.go"
-        else:
-            run_from = os.path.join(main_dir, "run_tests.py")
-        sys.exit(f"No test module provided; consider using {run_from} instead")
+    arg_parser = argparse.ArgumentParser(
+        prog="test_runner.py",
+        desciption="Run a pygame test file.",
+        parents=[base_arg_parser],
+    )
+    arg_parser.add_argument("test", nargs=1, help="the test to run")
+    args = arg_parser.parse_args()
     run_test(
-        args[0],
-        incomplete=options.incomplete,
-        usesubprocess=options.usesubprocess,
-        randomize=options.randomize,
-        exclude=options.exclude,
-        buffer=(not options.unbuffered),
+        args.test,
+        incomplete=args.incomplete,
+        usesubprocess=args.usesubprocess,
+        randomize=args.randomize,
+        exclude=args.exclude,
+        buffer=(not args.unbuffered),
+        verbosity=args.verbosity,
     )
 
 ################################################################################
