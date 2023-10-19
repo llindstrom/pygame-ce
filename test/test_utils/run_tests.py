@@ -120,6 +120,7 @@ def run(*args, **kwds):
     option_python = options.pop("python", sys.executable)
     option_exclude = options.pop("exclude", ())
     option_interactive = options.pop("interactive", False)
+    option_verbosity = options.pop("verbosity", 1)
 
     if not option_interactive and "interactive" not in option_exclude:
         option_exclude += ("interactive",)
@@ -233,9 +234,14 @@ def run(*args, **kwds):
             from test.test_utils.async_sub import proc_in_time_or_kill
 
         pass_on_args = ["--exclude", ",".join(option_exclude)]
-        for field in ["randomize", "incomplete", "unbuffered", "verbosity"]:
+        for field in ["randomize", "incomplete", "unbuffered"]:
             if kwds.get(field, False):
                 pass_on_args.append("--" + field)
+        if option_verbosity == 0:
+            pass_on_args.append("--quiet")
+        elif option_verbosity > 1:
+            pass_on_args.append("--verbose")
+        pass_on_args.append("--usesubprocess")
 
         def sub_test(module):
             print(f"loading {module}")

@@ -56,7 +56,8 @@ opt_parser.add_option(
     "-s",
     "--usesubprocess",
     action="store_true",
-    help="run everything in a single process " " (default: use no subprocesses)",
+    default=False,
+    help="run everything in a single process (default: use no subprocesses)",
 )
 
 opt_parser.add_option(
@@ -91,6 +92,7 @@ opt_parser.add_option(
     const=0,
     help="Quiet output",
 )
+opt_parser.set_defaults(verbosity=1)
 
 opt_parser.add_option(
     "-r", "--randomize", action="store_true", help="randomize order of tests"
@@ -255,16 +257,18 @@ def get_test_results(raw_return):
 def run_test(
     module,
     incomplete=False,
-    usesubprocess=True,
+    usesubprocess=None,
     randomize=False,
     exclude=("interactive",),
     buffer=True,
     unbuffered=None,
-    verbosity=1,
+    verbosity=None,
 ):
     """Run a unit test module"""
     suite = unittest.TestSuite()
 
+    if usesubprocess is None:
+        usesubprocess = False
     if verbosity is None:
         verbosity = 1
 
@@ -319,6 +323,7 @@ if __name__ == "__main__":
         randomize=options.randomize,
         exclude=options.exclude,
         buffer=(not options.unbuffered),
+        verbosity=options.verbosity,
     )
 
 ################################################################################
