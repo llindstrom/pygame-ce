@@ -2,7 +2,7 @@ import unittest
 import pygame
 import pygame.gfxdraw
 from pygame.locals import *
-from pygame.tests.test_utils import SurfaceSubclass
+from test_utils import SurfaceSubclass
 
 
 def intensity(c, i):

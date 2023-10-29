@@ -11,7 +11,7 @@ IS_PYPY = "PyPy" == platform.python_implementation()
 
 
 try:
-    from pygame.tests.test_utils import arrinter
+    from test_utils import arrinter
 except NameError:
     pass
 
@@ -1242,7 +1242,7 @@ class FreeTypeFontTest(unittest.TestCase):
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     @unittest.skipIf(IS_PYPY, "pypy no likey")
     def test_newbuf(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Exporter = buftools.Exporter
         font = self._TEST_FONTS["sans"]

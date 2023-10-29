@@ -3,7 +3,7 @@ import os
 import platform
 
 from pygame.tests import test_utils
-from pygame.tests.test_utils import example_path
+from test_utils import example_path
 
 import pygame
 import pygame.transform

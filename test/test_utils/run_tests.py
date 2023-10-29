@@ -1,29 +1,26 @@
 import sys
+from pathlib import Path
 
 if __name__ == "__main__":
     raise RuntimeError("This module is for import only")
-test_pkg_name = ".".join(__name__.split(".")[0:-2])
-is_pygame_pkg = test_pkg_name == "pygame.tests"
-test_runner_mod = test_pkg_name + ".test_utils.test_runner"
+from pygame_test_utils_extras import my_dir, test_dir
 
-if is_pygame_pkg:
-    from pygame.tests.test_utils import import_submodule
-    from pygame.tests.test_utils.test_runner import (
-        prepare_test_env,
-        run_test,
-        combine_results,
-        get_test_results,
-        TEST_RESULTS_START,
-    )
+if test_dir.name == "tests":
+    test_pkg_name = "pygame.tests"
 else:
-    from test.test_utils import import_submodule
-    from test.test_utils.test_runner import (
-        prepare_test_env,
-        run_test,
-        combine_results,
-        get_test_results,
-        TEST_RESULTS_START,
-    )
+    test_pkg_name = test_dir.name
+# test_pkg_name = ".".join(__name__.split(".")[0:-2])
+is_pygame_pkg = test_pkg_name == "pygame.tests"
+# test_runner_mod = test_pkg_name + ".test_utils.test_runner"
+test_runner_path = str(my_dir / "test_runner.py")
+
+from pygame_test_utils_extras import import_submodule
+from test_runner import (
+    run_test,
+    combine_results,
+    get_test_results,
+    TEST_RESULTS_START,
+)
 import pygame
 import pygame.threads
 
@@ -132,8 +129,6 @@ def run(*args, **kwds):
     option_exclude += ("python3_ignore",)
     option_exclude += ("SDL2_ignore",)
 
-    main_dir, test_subdir, fake_test_subdir = prepare_test_env()
-
     ###########################################################################
     # Compile a list of test modules. If fake, then compile list of fake
     # xxxx_test.py from run_tests__tests
@@ -144,14 +139,7 @@ def run(*args, **kwds):
 
     working_dir_temp = tempfile.mkdtemp()
 
-    if option_fake is not None:
-        test_mods_pkg_name = ".".join(
-            [test_mods_pkg_name, "run_tests__tests", option_fake]
-        )
-        test_subdir = os.path.join(fake_test_subdir, option_fake)
-        working_dir = test_subdir
-    else:
-        working_dir = working_dir_temp
+    working_dir = working_dir_temp
 
     # Added in because some machines will need os.environ else there will be
     # false failures in subprocess mode. Same issue as python2.6. Needs some
@@ -165,7 +153,7 @@ def run(*args, **kwds):
         test_modules = [m.endswith("_test") and (fmt1 % m) or (fmt2 % m) for m in args]
     else:
         test_modules = []
-        for f in sorted(os.listdir(test_subdir)):
+        for f in sorted(os.listdir(test_dir)):
             for match in TEST_MODULE_RE.findall(f):
                 test_modules.append(fmt1 % (match,))
 
@@ -228,10 +216,7 @@ def run(*args, **kwds):
     #
 
     else:
-        if is_pygame_pkg:
-            from pygame.tests.test_utils.async_sub import proc_in_time_or_kill
-        else:
-            from test.test_utils.async_sub import proc_in_time_or_kill
+        from async_sub import proc_in_time_or_kill
 
         pass_on_args = ["--exclude", ",".join(option_exclude)]
         for field in ["randomize", "incomplete", "unbuffered"]:
@@ -246,7 +231,8 @@ def run(*args, **kwds):
         def sub_test(module):
             print(f"loading {module}")
 
-            cmd = [option_python, "-m", test_runner_mod, module] + pass_on_args
+            # cmd = [option_python, "-m", test_runner_mod, module] + pass_on_args
+            cmd = [option_python, test_runner_path, module] + pass_on_args
 
             return (
                 module,
@@ -269,7 +255,7 @@ def run(*args, **kwds):
         t = time.time()
 
         for module, cmd, (return_code, raw_return) in tmap(sub_test, test_modules):
-            test_file = f"{os.path.join(test_subdir, module)}.py"
+            test_file = f"{os.path.join(test_dir, module)}.py"
             cmd, test_env, working_dir = cmd
 
             test_results = get_test_results(raw_return)

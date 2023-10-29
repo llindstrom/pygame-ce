@@ -5,7 +5,7 @@ import time
 import pathlib
 import platform
 
-from pygame.tests.test_utils import example_path, prompt, question
+from test_utils import example_path, prompt, question
 
 import pygame
 from pygame import mixer
@@ -386,7 +386,7 @@ class MixerModuleTest(unittest.TestCase):
             -64: "=q",
         }
         format = formats[fmt]
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Exporter = buftools.Exporter
         Importer = buftools.Importer

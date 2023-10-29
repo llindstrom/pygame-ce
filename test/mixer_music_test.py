@@ -4,7 +4,7 @@ import platform
 import unittest
 import time
 
-from pygame.tests.test_utils import example_path
+from test_utils import example_path
 import pygame
 
 

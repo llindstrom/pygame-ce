@@ -172,7 +172,7 @@ import warnings
 from array import array
 from functools import reduce
 
-from pygame.tests.test_utils import tostring
+from pygame_test_utils_extras import tostring
 
 __all__ = ["Image", "Reader", "Writer", "write_chunks", "from_array"]
 

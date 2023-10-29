@@ -7,7 +7,8 @@ import unittest
 import glob
 import pathlib
 
-from pygame.tests.test_utils import example_path, png, tostring
+from test_utils import example_path, tostring
+import png
 import pygame, pygame.image, pygame.pkgdata
 
 sdl_image_svg_jpeg_save_bug = False

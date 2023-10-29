@@ -1,5 +1,5 @@
 import unittest
-from pygame.tests.test_utils import fixture_path
+from test_utils import fixture_path
 import pygame
 
 

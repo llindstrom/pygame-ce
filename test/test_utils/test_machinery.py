@@ -8,7 +8,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from . import import_submodule
+from pygame_test_utils_extras import import_submodule
 
 
 class PygameTestLoader(unittest.TestLoader):

@@ -2,7 +2,7 @@ import platform
 import unittest
 
 try:
-    from pygame.tests.test_utils import arrinter
+    from test_utils import arrinter
 except NameError:
     pass
 import pygame
@@ -597,7 +597,7 @@ class PixelCopyTestWithArrayNumpy(unittest.TestCase):
 @unittest.skipIf(IS_PYPY, "pypy having illegal instruction on mac")
 class PixelCopyTestWithArrayNewBuf(unittest.TestCase):
     if pygame.HAVE_NEWBUF:
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         class Array2D(buftools.Exporter):
             def __init__(self, initializer):

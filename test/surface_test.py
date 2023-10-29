@@ -1,13 +1,13 @@
 import os
 import unittest
 from pygame.tests import test_utils
-from pygame.tests.test_utils import (
+from test_utils import (
     example_path,
     SurfaceSubclass,
 )
 
 try:
-    from pygame.tests.test_utils.arrinter import *
+    from test_utils.arrinter import *
 except (ImportError, NameError):
     pass
 import pygame
@@ -2973,7 +2973,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
 
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     def test_newbuf_PyBUF_flags_bytes(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((10, 6), 0, 32)
@@ -3035,7 +3035,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
     def test_newbuf_PyBUF_flags_0D(self):
         # This is the same handler as used by get_buffer(), so just
         # confirm that it succeeds for one case.
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((10, 6), 0, 32)
@@ -3053,7 +3053,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
 
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     def test_newbuf_PyBUF_flags_1D(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((10, 6), 0, 32)
@@ -3092,7 +3092,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
 
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     def test_newbuf_PyBUF_flags_2D(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((10, 6), 0, 32)
@@ -3163,7 +3163,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
 
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     def test_newbuf_PyBUF_flags_3D(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((12, 6), 0, 24)
@@ -3216,7 +3216,7 @@ class SurfaceGetBufferTest(unittest.TestCase):
     def test_newbuf_PyBUF_flags_rgba(self):
         # All color plane views are handled by the same routine,
         # so only one plane need be checked.
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Importer = buftools.Importer
         s = pygame.Surface((12, 6), 0, 24)

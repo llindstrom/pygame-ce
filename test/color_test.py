@@ -1068,7 +1068,7 @@ class ColorTypeTest(unittest.TestCase):
 
     @unittest.skipIf(IS_PYPY, "PyPy has no ctypes")
     def test_arraystruct(self):
-        import pygame.tests.test_utils.arrinter as ai
+        import test_utils.arrinter as ai
         import ctypes as ct
 
         c_byte_p = ct.POINTER(ct.c_byte)
@@ -1090,7 +1090,7 @@ class ColorTypeTest(unittest.TestCase):
 
     @unittest.skipIf(not pygame.HAVE_NEWBUF, "newbuf not implemented")
     def test_newbuf(self):
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
         from ctypes import cast, POINTER, c_uint8
 
         class ColorImporter(buftools.Importer):

@@ -259,7 +259,7 @@ class BufferProxyTest(unittest.TestCase):
     def NEWBUF_test_newbuf(self):
         from ctypes import string_at
 
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
         Exporter = buftools.Exporter
         Importer = buftools.Importer

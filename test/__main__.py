@@ -12,25 +12,11 @@ run_tests.py in the main distribution directory is an alternative to test.go
 
 """
 
+from . import is_pygame_pkg
 import sys
 
-if __name__ == "__main__":
-    import os
-
-    pkg_dir = os.path.split(os.path.abspath(__file__))[0]
-    parent_dir, pkg_name = os.path.split(pkg_dir)
-    is_pygame_pkg = pkg_name == "tests" and os.path.split(parent_dir)[1] == "pygame"
-    if not is_pygame_pkg:
-        sys.path.insert(0, parent_dir)
-else:
-    is_pygame_pkg = __name__.startswith("pygame.tests.")
-
-if is_pygame_pkg:
-    from pygame.tests.test_utils.run_tests import run_and_exit
-    from pygame.tests.test_utils.test_runner import opt_parser
-else:
-    from test.test_utils.run_tests import run_and_exit
-    from test.test_utils.test_runner import opt_parser
+from test_utils.run_tests import run_and_exit
+from test_utils.test_runner import opt_parser
 
 if is_pygame_pkg:
     test_pkg_name = "pygame.tests"
@@ -38,7 +24,7 @@ else:
     test_pkg_name = "test"
 program_name = sys.argv[0]
 if program_name == "-c":
-    program_name = f'python -c "import {test_pkg_name}.go"'
+    program_name = f'python -c "import {test_pkg_name}"'
 
 ###########################################################################
 # Set additional command line options

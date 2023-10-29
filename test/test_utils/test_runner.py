@@ -1,33 +1,14 @@
 import sys
 import os
 
-if __name__ == "__main__":
-    pkg_dir = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
-    parent_dir, pkg_name = os.path.split(pkg_dir)
-    is_pygame_pkg = pkg_name == "tests" and os.path.split(parent_dir)[1] == "pygame"
-    if not is_pygame_pkg:
-        sys.path.insert(0, parent_dir)
-else:
-    is_pygame_pkg = __name__.startswith("pygame.tests.")
-
 import io
 import optparse
 import re
 import unittest
 from pprint import pformat
 
-from .test_machinery import PygameTestLoader
+from test_machinery import PygameTestLoader
 
-
-def prepare_test_env():
-    test_subdir = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
-    main_dir = os.path.split(test_subdir)[0]
-    sys.path.insert(0, test_subdir)
-    fake_test_subdir = os.path.join(test_subdir, "run_tests__tests")
-    return main_dir, test_subdir, fake_test_subdir
-
-
-main_dir, test_subdir, fake_test_subdir = prepare_test_env()
 
 ################################################################################
 # Set the command line options.
@@ -265,6 +246,13 @@ def run_test(
     verbosity=None,
 ):
     """Run a unit test module"""
+
+    # Ensure the unit test directory is on sys.path
+    if __name__ == "__main__":
+        from pygame_test_utils_extras import test_dir
+
+        sys.path.append(str(test_dir))
+
     suite = unittest.TestSuite()
 
     if usesubprocess is None:
@@ -311,10 +299,6 @@ def run_test(
 if __name__ == "__main__":
     options, args = opt_parser.parse_args()
     if not args:
-        if is_pygame_pkg:
-            run_from = "pygame.tests.go"
-        else:
-            run_from = os.path.join(main_dir, "run_tests.py")
         sys.exit(f"No test module provided; consider using {run_from} instead")
     run_test(
         args[0],

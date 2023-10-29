@@ -6,7 +6,7 @@ import platform
 IS_PYPY = "PyPy" == platform.python_implementation()
 
 try:
-    from pygame.tests.test_utils import arrinter
+    from test_utils import arrinter
 except NameError:
     pass
 import pygame
@@ -194,7 +194,7 @@ class BaseModuleTest(unittest.TestCase):
             self.assertEqual(getrefcount(o.__array_struct__), 1)
 
     if pygame.HAVE_NEWBUF:
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
     def NEWBUF_assertSame(self, proxy, exp):
         buftools = self.buftools

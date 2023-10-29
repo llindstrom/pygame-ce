@@ -2,7 +2,7 @@ import unittest
 import os
 import pygame
 from pygame._sdl2 import touch
-from pygame.tests.test_utils import question
+from test_utils import question
 
 
 class TouchTest(unittest.TestCase):

@@ -6,10 +6,10 @@ import unittest
 import weakref
 from functools import reduce
 
-from pygame.tests.test_utils import SurfaceSubclass
+from test_utils import SurfaceSubclass
 
 try:
-    from pygame.tests.test_utils import arrinter
+    from test_utils import arrinter
 except NameError:
     pass
 
@@ -1454,7 +1454,7 @@ class PixelArrayArrayInterfaceTest(unittest.TestCase, TestMixin):
 @unittest.skipIf(IS_PYPY, "pypy having issues")
 class PixelArrayNewBufferTest(unittest.TestCase, TestMixin):
     if pygame.HAVE_NEWBUF:
-        from pygame.tests.test_utils import buftools
+        from test_utils import buftools
 
     bitsize_to_format = {8: "B", 16: "=H", 24: "3x", 32: "=I"}
 
